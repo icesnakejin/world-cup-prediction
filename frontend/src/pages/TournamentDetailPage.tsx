@@ -92,7 +92,7 @@ export function TournamentDetailPage() {
           <div className="border-b border-line px-4 py-3">
             <h2 className="text-sm font-bold uppercase tracking-wide text-slate-600">Tournament Winner</h2>
           </div>
-          <div className="grid gap-2 p-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="max-h-[65vh] grid gap-2 overflow-y-auto p-3 pr-2 sm:grid-cols-2 lg:grid-cols-3">
             {markets.map((market) => (
               <button
                 className={[
