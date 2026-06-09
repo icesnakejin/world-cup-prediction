@@ -20,6 +20,7 @@ export function AppLayout() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const currentStage = searchParams.get("stage") ?? "group";
+  const showTournamentSidebar = location.pathname === "/matches";
 
   useEffect(() => {
     async function loadBalance() {
@@ -88,29 +89,31 @@ export function AppLayout() {
       </header>
 
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-4 px-4 py-4 lg:grid-cols-[220px_minmax(0,1fr)]">
-        <aside className="hidden rounded-md border border-line bg-white p-3 lg:block">
-          <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">Tournament</p>
-          <nav className="space-y-1">
-            <Link
-              className={[
-                "flex w-full items-center rounded-md px-3 py-2 text-left text-sm font-semibold transition",
-                currentStage === "group" ? "bg-blue-50 text-ocean" : "text-slate-700 hover:bg-blue-50 hover:text-ocean"
-              ].join(" ")}
-              to="/matches?stage=group"
-            >
-              Group Stage
-            </Link>
-            <Link
-              className={[
-                "flex w-full items-center rounded-md px-3 py-2 text-left text-sm font-semibold transition",
-                currentStage === "knockout" ? "bg-blue-50 text-ocean" : "text-slate-700 hover:bg-blue-50 hover:text-ocean"
-              ].join(" ")}
-              to="/matches?stage=knockout"
-            >
-              Knockout Stage
-            </Link>
-          </nav>
-        </aside>
+        {showTournamentSidebar && (
+          <aside className="hidden rounded-md border border-line bg-white p-3 lg:block">
+            <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">Tournament</p>
+            <nav className="space-y-1">
+              <Link
+                className={[
+                  "flex w-full items-center rounded-md px-3 py-2 text-left text-sm font-semibold transition",
+                  currentStage === "group" ? "bg-blue-50 text-ocean" : "text-slate-700 hover:bg-blue-50 hover:text-ocean"
+                ].join(" ")}
+                to="/matches?stage=group"
+              >
+                Group Stage
+              </Link>
+              <Link
+                className={[
+                  "flex w-full items-center rounded-md px-3 py-2 text-left text-sm font-semibold transition",
+                  currentStage === "knockout" ? "bg-blue-50 text-ocean" : "text-slate-700 hover:bg-blue-50 hover:text-ocean"
+                ].join(" ")}
+                to="/matches?stage=knockout"
+              >
+                Knockout Stage
+              </Link>
+            </nav>
+          </aside>
+        )}
         <main className="min-w-0">
           <Outlet />
         </main>
