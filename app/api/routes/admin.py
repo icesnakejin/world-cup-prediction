@@ -15,6 +15,7 @@ from app.schemas.match import MatchRead
 from app.schemas.tournament import TournamentRead, TournamentWinnerUpdate
 from app.services.settlement import BetNotFoundError, MatchNotCompletedError, MatchNotFoundError, SettlementService
 from app.services.tournaments import TournamentBetNotFoundError, TournamentNotCompletedError, TournamentNotFoundError, TournamentSettlementService
+from scripts.seed_initial_data import main as seed_initial_data
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -62,6 +63,15 @@ def serialize_admin_tournament_bet(bet: TournamentBet) -> AdminTournamentBetRead
         status=bet.status,
         created_at=bet.created_at,
     )
+
+
+@router.post("/seed/initial-data")
+def seed_admin_initial_data(
+    current_user: User = Depends(get_admin_user),
+) -> dict[str, str]:
+    _ = current_user
+    seed_initial_data()
+    return {"status": "ok", "detail": "Initial users, wallet transactions, matches, markets, and tournaments seeded."}
 
 
 @router.get("/bets/matches", response_model=list[AdminMatchBetRead])

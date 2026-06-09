@@ -136,7 +136,7 @@ Render setup:
 5. Confirm the web service start command:
 
 ```bash
-uvicorn app.main:app --host 0.0.0.0 --port $PORT
+alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
 ```
 
 6. Confirm the health check path:
@@ -163,19 +163,19 @@ Render backend URL format:
 https://your-render-backend.onrender.com
 ```
 
-After Render deploys the backend, open the backend service Shell and run migrations:
+Render Free does not include Shell access. Migrations run automatically before each backend start because the start command begins with:
 
 ```bash
 alembic upgrade head
 ```
 
-Seed production sample data:
+To seed production sample data without Shell access:
 
-```bash
-python -m scripts.seed_initial_data
-```
+1. Register or log in as an admin email configured in `ADMIN_EMAILS`.
+2. Open the frontend Admin page.
+3. Click `Import Sample Data`.
 
-The seed command is idempotent. It creates configured users, initial wallet transactions, sample matches, match winner markets, over/under 2.5 markets, exact score markets, tournament, and tournament winner markets.
+The admin import is idempotent. It creates configured seed users, initial wallet transactions, sample matches, match winner markets, over/under 2.5 markets, exact score markets, tournament, and tournament winner markets.
 
 ### Vercel Frontend
 
@@ -274,8 +274,8 @@ ORDER BY wt.id;
 - Render backend has `ADMIN_EMAILS=ian@test.com`.
 - Render backend `BACKEND_CORS_ORIGINS` exactly matches the deployed Vercel URL.
 - Render health check `/health` returns `{"status":"ok"}`.
-- Production migration completed in Render Shell with `alembic upgrade head`.
-- Production seed completed in Render Shell with `python -m scripts.seed_initial_data`.
+- Production migrations run automatically during Render startup.
+- Production seed/import completed from Admin page with `Import Sample Data`.
 - Vercel project root is `frontend`.
 - Vercel has `VITE_API_BASE_URL` pointing to the Render backend URL.
 - Vercel has `VITE_ADMIN_EMAILS=ian@test.com`.

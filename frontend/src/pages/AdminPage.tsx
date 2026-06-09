@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { Ban, RotateCcw, Save } from "lucide-react";
+import { Ban, Database, RotateCcw, Save } from "lucide-react";
 
 import { api } from "../api/client";
 import { AdminMatchBet, AdminTournamentBet, Match, Tournament, TournamentMarket } from "../api/types";
@@ -27,6 +27,7 @@ export function AdminPage() {
   const [busyMatchId, setBusyMatchId] = useState<number | null>(null);
   const [busyTournamentId, setBusyTournamentId] = useState<number | null>(null);
   const [busyBetKey, setBusyBetKey] = useState<string | null>(null);
+  const [seeding, setSeeding] = useState(false);
   const { showToast } = useToast();
 
   async function loadAdminData() {
@@ -222,11 +223,36 @@ export function AdminPage() {
     }
   }
 
+  async function seedInitialData() {
+    setSeeding(true);
+    try {
+      await api.post("/admin/seed/initial-data");
+      showToast("Sample data imported");
+      await loadAdminData();
+      window.dispatchEvent(new Event("wallet:refresh"));
+    } catch {
+      showToast("Could not import sample data");
+    } finally {
+      setSeeding(false);
+    }
+  }
+
   return (
     <section className="space-y-4">
-      <div className="rounded-md border border-line bg-white px-4 py-3 shadow-sm">
-        <h1 className="text-lg font-bold text-ink">Admin Portal</h1>
-        <p className="text-sm text-slate-500">Local testing controls for result settlement.</p>
+      <div className="flex flex-col gap-3 rounded-md border border-line bg-white px-4 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-lg font-bold text-ink">Admin Portal</h1>
+          <p className="text-sm text-slate-500">Deployment and local testing controls.</p>
+        </div>
+        <button
+          className="flex h-10 items-center justify-center gap-2 rounded-md bg-ocean px-4 text-sm font-bold text-white hover:bg-blue-800 disabled:opacity-60"
+          disabled={seeding}
+          onClick={seedInitialData}
+          type="button"
+        >
+          <Database size={17} />
+          Import Sample Data
+        </button>
       </div>
 
       {loading && <EmptyState title="Loading admin controls" />}
