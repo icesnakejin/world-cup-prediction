@@ -110,18 +110,27 @@ export function MatchesPage() {
               </div>
               <div className="space-y-4 p-3">
                 {knockoutStage.map((section) => (
-                  <section key={section.title} className="space-y-3">
-                    <h3 className="px-1 text-xs font-bold uppercase tracking-wide text-slate-500">{section.title}</h3>
-                    {section.matches.map((match) => (
-                      <MatchCard
-                        key={match.id}
-                        match={match}
-                        markets={marketsByMatch[match.id] ?? []}
-                        onSelect={setSelected}
-                        selectedMarketId={selected?.market.id ?? null}
-                      />
-                    ))}
-                  </section>
+                  <details key={section.title} className="group rounded-md border border-line bg-slate-50">
+                    <summary className="cursor-pointer list-none px-4 py-3 text-sm font-bold text-ink">
+                      <span className="flex items-center justify-between gap-3">
+                        <span>{section.title}</span>
+                        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          {section.matches.length} matches
+                        </span>
+                      </span>
+                    </summary>
+                    <div className="space-y-3 border-t border-line p-3">
+                      {section.matches.map((match) => (
+                        <MatchCard
+                          key={match.id}
+                          match={match}
+                          markets={marketsByMatch[match.id] ?? []}
+                          onSelect={setSelected}
+                          selectedMarketId={selected?.market.id ?? null}
+                        />
+                      ))}
+                    </div>
+                  </details>
                 ))}
               </div>
             </section>
