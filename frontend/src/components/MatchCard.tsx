@@ -22,6 +22,7 @@ const labels: Record<string, string> = {
 };
 
 export function MatchCard({ match, markets, selectedMarketId, onSelect }: MatchCardProps) {
+  const bettingDisabled = match.stage !== "group";
   const teamWinMarkets = markets.filter((market) => market.market_type === "match_winner");
   const overUnderMarkets = markets.filter((market) => market.market_type === "over_under");
   const exactScoreMarkets = markets.filter((market) => market.market_type === "exact_score");
@@ -55,6 +56,7 @@ export function MatchCard({ match, markets, selectedMarketId, onSelect }: MatchC
           match={match}
           onSelect={onSelect}
           selectedMarketId={selectedMarketId}
+          disabled={bettingDisabled}
           title="Team Win"
         />
         <MarketGroup
@@ -63,6 +65,7 @@ export function MatchCard({ match, markets, selectedMarketId, onSelect }: MatchC
           match={match}
           onSelect={onSelect}
           selectedMarketId={selectedMarketId}
+          disabled={bettingDisabled}
           title={overUnderMarkets[0]?.line ? `Over/Under ${Number(overUnderMarkets[0].line).toFixed(1)}` : "Over/Under"}
         />
         <MarketGroup
@@ -71,6 +74,7 @@ export function MatchCard({ match, markets, selectedMarketId, onSelect }: MatchC
           match={match}
           onSelect={onSelect}
           selectedMarketId={selectedMarketId}
+          disabled={bettingDisabled}
           title="Exact Score"
         />
       </div>
@@ -84,6 +88,7 @@ function MarketGroup({
   match,
   onSelect,
   selectedMarketId,
+  disabled,
   title
 }: {
   gridClassName: string;
@@ -91,6 +96,7 @@ function MarketGroup({
   match: Match;
   onSelect: (selection: BetSelection) => void;
   selectedMarketId: number | null;
+  disabled: boolean;
   title: string;
 }) {
   if (markets.length === 0) {
@@ -108,9 +114,17 @@ function MarketGroup({
               "min-h-16 rounded-md border px-2 py-2 text-center transition",
               selectedMarketId === market.id
                 ? "border-emerald-700 bg-emerald-50 text-emerald-800"
-                : "border-blue-300 bg-white text-ocean hover:bg-blue-50"
+                : disabled
+                  ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
+                  : "border-blue-300 bg-white text-ocean hover:bg-blue-50"
             ].join(" ")}
-            onClick={() => onSelect({ match, market })}
+            onClick={() => {
+              if (disabled) {
+                return;
+              }
+              onSelect({ match, market });
+            }}
+            disabled={disabled}
             type="button"
           >
             <span className="block text-xs font-bold uppercase text-slate-500">{labels[market.selection] ?? market.selection}</span>

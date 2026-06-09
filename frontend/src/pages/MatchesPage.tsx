@@ -50,6 +50,12 @@ export function MatchesPage() {
     void loadMatches();
   }, []);
 
+  useEffect(() => {
+    if (activeStage === "knockout") {
+      setSelected(null);
+    }
+  }, [activeStage]);
+
   async function placeBet(stake: number) {
     if (!selected) {
       return;
@@ -108,12 +114,16 @@ export function MatchesPage() {
           </div>
         )}
       </section>
-      <aside className="hidden xl:block">
-        <BetSlip onClear={() => setSelected(null)} onPlaceBet={placeBet} selection={selected} />
-      </aside>
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-[#eef3f8] p-3 shadow-2xl xl:hidden">
-        <BetSlip onClear={() => setSelected(null)} onPlaceBet={placeBet} selection={selected} />
-      </div>
+      {activeStage === "group" && (
+        <>
+          <aside className="hidden xl:block">
+            <BetSlip onClear={() => setSelected(null)} onPlaceBet={placeBet} selection={selected} />
+          </aside>
+          <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-[#eef3f8] p-3 shadow-2xl xl:hidden">
+            <BetSlip onClear={() => setSelected(null)} onPlaceBet={placeBet} selection={selected} />
+          </div>
+        </>
+      )}
     </div>
   );
 }
