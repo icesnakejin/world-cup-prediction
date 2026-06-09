@@ -23,7 +23,7 @@ export function TournamentsPage() {
   return (
     <section className="space-y-3">
       <div className="rounded-md border border-line bg-white px-4 py-3 shadow-sm">
-        <h1 className="text-lg font-bold text-ink">Tournaments</h1>
+        <h1 className="text-lg font-bold text-ink">World Champion</h1>
         <p className="text-sm text-slate-500">Tournament winner futures use virtual coins only.</p>
       </div>
       {loading && <EmptyState title="Loading tournaments" />}
@@ -40,8 +40,7 @@ export function TournamentsPage() {
                 <Trophy size={22} />
               </div>
               <div className="min-w-0">
-                <h2 className="font-bold text-ink">{tournament.name}</h2>
-                <p className="mt-1 text-sm text-slate-500">{tournament.year}</p>
+                <h2 className="font-bold text-ink">World Champion</h2>
                 <span className="mt-3 inline-flex rounded-md bg-slate-100 px-2 py-1 text-xs font-bold uppercase text-slate-600">
                   {tournament.status}
                 </span>
