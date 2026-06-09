@@ -88,7 +88,12 @@ export function AppLayout() {
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-4 px-4 py-4 lg:grid-cols-[220px_minmax(0,1fr)]">
+      <div
+        className={[
+          "mx-auto grid max-w-[1440px] grid-cols-1 gap-4 px-4 py-4",
+          showTournamentSidebar ? "lg:grid-cols-[220px_minmax(0,1fr)]" : "lg:grid-cols-1"
+        ].join(" ")}
+      >
         {showTournamentSidebar && (
           <aside className="hidden rounded-md border border-line bg-white p-3 lg:block">
             <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">Tournament</p>
