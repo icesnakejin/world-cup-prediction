@@ -83,7 +83,6 @@ export function MatchesPage() {
               <details
                 key={section.title}
                 className="group rounded-md border border-line bg-white shadow-sm"
-                open={activeStage === "group" && section.title === "Group A"}
               >
                 <summary className="cursor-pointer list-none border-b border-line px-4 py-3">
                   <span className="flex items-center justify-between gap-3">
