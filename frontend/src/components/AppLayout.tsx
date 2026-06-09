@@ -54,8 +54,8 @@ export function AppLayout() {
             <NavLink className={navLinkClass} to="/matches?stage=group">
               Matches
             </NavLink>
-            <NavLink className={navLinkClass} to="/tournaments">
-              Tournaments
+            <NavLink className={navLinkClass} to="/tournaments/1">
+              World Champion
             </NavLink>
             <NavLink className={navLinkClass} to="/my-bets">
               My Bets

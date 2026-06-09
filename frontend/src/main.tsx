@@ -13,7 +13,6 @@ import { MatchesPage } from "./pages/MatchesPage";
 import { MyBetsPage } from "./pages/MyBetsPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { TournamentDetailPage } from "./pages/TournamentDetailPage";
-import { TournamentsPage } from "./pages/TournamentsPage";
 import { WalletPage } from "./pages/WalletPage";
 import "./styles.css";
 
@@ -33,7 +32,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               }
             >
               <Route path="/matches" element={<MatchesPage />} />
-              <Route path="/tournaments" element={<TournamentsPage />} />
+              <Route path="/tournaments" element={<Navigate to="/tournaments/1" replace />} />
               <Route path="/tournaments/:id" element={<TournamentDetailPage />} />
               <Route path="/my-bets" element={<MyBetsPage />} />
               <Route path="/wallet" element={<WalletPage />} />
