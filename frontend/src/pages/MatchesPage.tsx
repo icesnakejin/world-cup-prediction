@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import { api } from "../api/client";
 import { MatchMarket, Match, Market } from "../api/types";
@@ -20,6 +21,8 @@ export function MatchesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { showToast } = useToast();
+  const [searchParams] = useSearchParams();
+  const activeStage = searchParams.get("stage") === "knockout" ? "knockout" : "group";
 
   useEffect(() => {
     async function loadMatches() {
@@ -60,80 +63,49 @@ export function MatchesPage() {
   const sections = buildMatchSections(matches);
   const groupStage = sections.filter((section) => section.kind === "group");
   const knockoutStage = sections.filter((section) => section.kind === "knockout");
+  const visibleSections = activeStage === "group" ? groupStage : knockoutStage;
 
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
       <section className="min-w-0 space-y-3">
         <div className="rounded-md border border-line bg-white px-4 py-3 shadow-sm">
           <h1 className="text-lg font-bold text-ink">World Cup Matches</h1>
-          <p className="text-sm text-slate-500">Match winner markets use virtual coins only.</p>
+          <p className="text-sm text-slate-500">
+            {activeStage === "group" ? "Group stage matches and markets." : "Knockout stage matches and markets."}
+          </p>
         </div>
         {loading && <EmptyState title="Loading matches" />}
         {error && <EmptyState title={error} />}
         {!loading && !error && matches.length === 0 && <EmptyState title="No matches available" />}
         {!loading && !error && matches.length > 0 && (
           <div className="space-y-4">
-            <section className="rounded-md border border-line bg-white shadow-sm">
-              <div className="border-b border-line px-4 py-3">
-                <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500">Group Stage</h2>
-              </div>
-              <div className="space-y-3 p-3">
-                {groupStage.map((section) => (
-                  <details key={section.title} className="group rounded-md border border-line bg-slate-50" open={section.title === "Group A"}>
-                    <summary className="cursor-pointer list-none px-4 py-3 text-sm font-bold text-ink">
-                      <span className="flex items-center justify-between gap-3">
-                        <span>{section.title}</span>
-                        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                          {section.matches.length} matches
-                        </span>
-                      </span>
-                    </summary>
-                    <div className="space-y-3 border-t border-line p-3">
-                      {section.matches.map((match) => (
-                        <MatchCard
-                          key={match.id}
-                          match={match}
-                          markets={marketsByMatch[match.id] ?? []}
-                          onSelect={setSelected}
-                          selectedMarketId={selected?.market.id ?? null}
-                        />
-                      ))}
-                    </div>
-                  </details>
-                ))}
-              </div>
-            </section>
-
-            <section className="rounded-md border border-line bg-white shadow-sm">
-              <div className="border-b border-line px-4 py-3">
-                <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500">Knock Out Stage</h2>
-              </div>
-              <div className="space-y-4 p-3">
-                {knockoutStage.map((section) => (
-                  <details key={section.title} className="group rounded-md border border-line bg-slate-50">
-                    <summary className="cursor-pointer list-none px-4 py-3 text-sm font-bold text-ink">
-                      <span className="flex items-center justify-between gap-3">
-                        <span>{section.title}</span>
-                        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                          {section.matches.length} matches
-                        </span>
-                      </span>
-                    </summary>
-                    <div className="space-y-3 border-t border-line p-3">
-                      {section.matches.map((match) => (
-                        <MatchCard
-                          key={match.id}
-                          match={match}
-                          markets={marketsByMatch[match.id] ?? []}
-                          onSelect={setSelected}
-                          selectedMarketId={selected?.market.id ?? null}
-                        />
-                      ))}
-                    </div>
-                  </details>
-                ))}
-              </div>
-            </section>
+            {visibleSections.map((section) => (
+              <details
+                key={section.title}
+                className="group rounded-md border border-line bg-white shadow-sm"
+                open={activeStage === "group" && section.title === "Group A"}
+              >
+                <summary className="cursor-pointer list-none border-b border-line px-4 py-3">
+                  <span className="flex items-center justify-between gap-3">
+                    <span className="text-sm font-bold uppercase tracking-wide text-slate-500">{section.title}</span>
+                    <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      {section.matches.length} matches
+                    </span>
+                  </span>
+                </summary>
+                <div className="space-y-3 p-3">
+                  {section.matches.map((match) => (
+                    <MatchCard
+                      key={match.id}
+                      match={match}
+                      markets={marketsByMatch[match.id] ?? []}
+                      onSelect={setSelected}
+                      selectedMarketId={selected?.market.id ?? null}
+                    />
+                  ))}
+                </div>
+              </details>
+            ))}
           </div>
         )}
       </section>

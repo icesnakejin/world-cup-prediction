@@ -1,5 +1,5 @@
 import { Trophy, Wallet } from "lucide-react";
-import { NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import { api } from "../api/client";
@@ -17,6 +17,9 @@ export function AppLayout() {
   const { logout, user } = useAuth();
   const [balance, setBalance] = useState<number | null>(null);
   const isAdmin = isAdminEmail(user?.email);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const currentStage = searchParams.get("stage") ?? "group";
 
   useEffect(() => {
     async function loadBalance() {
@@ -47,7 +50,7 @@ export function AppLayout() {
             </div>
           </div>
           <nav className="flex flex-wrap items-center gap-1">
-            <NavLink className={navLinkClass} to="/matches">
+            <NavLink className={navLinkClass} to="/matches?stage=group">
               Matches
             </NavLink>
             <NavLink className={navLinkClass} to="/tournaments">
@@ -88,15 +91,24 @@ export function AppLayout() {
         <aside className="hidden rounded-md border border-line bg-white p-3 lg:block">
           <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">Tournament</p>
           <nav className="space-y-1">
-            {["World Cup", "Group Stage", "Knockout Stage"].map((item) => (
-              <button
-                key={item}
-                className="flex w-full items-center rounded-md px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-ocean"
-                type="button"
-              >
-                {item}
-              </button>
-            ))}
+            <Link
+              className={[
+                "flex w-full items-center rounded-md px-3 py-2 text-left text-sm font-semibold transition",
+                currentStage === "group" ? "bg-blue-50 text-ocean" : "text-slate-700 hover:bg-blue-50 hover:text-ocean"
+              ].join(" ")}
+              to="/matches?stage=group"
+            >
+              Group Stage
+            </Link>
+            <Link
+              className={[
+                "flex w-full items-center rounded-md px-3 py-2 text-left text-sm font-semibold transition",
+                currentStage === "knockout" ? "bg-blue-50 text-ocean" : "text-slate-700 hover:bg-blue-50 hover:text-ocean"
+              ].join(" ")}
+              to="/matches?stage=knockout"
+            >
+              Knockout Stage
+            </Link>
           </nav>
         </aside>
         <main className="min-w-0">
