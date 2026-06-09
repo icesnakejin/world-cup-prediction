@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { api } from "../api/client";
-import { Market, Match } from "../api/types";
+import { MatchMarket, Match, Market } from "../api/types";
 import { BetSelection, BetSlip } from "../components/BetSlip";
 import { EmptyState } from "../components/EmptyState";
 import { MatchCard } from "../components/MatchCard";
@@ -22,21 +22,23 @@ export function MatchesPage() {
 
   useEffect(() => {
     async function loadMatches() {
-      setLoading(true);
-      setError("");
-      try {
-        const matchResponse = await api.get<Match[]>("/matches");
-        setMatches(matchResponse.data);
-        const marketEntries = await Promise.all(
-          matchResponse.data.map(async (match) => {
-            const response = await api.get<Market[]>(`/matches/${match.id}/markets`);
-            return [match.id, response.data] as const;
-          })
-        );
-        setMarketsByMatch(Object.fromEntries(marketEntries));
-      } catch {
-        setError("Could not load matches.");
-      } finally {
+        setLoading(true);
+        setError("");
+        try {
+          const matchResponse = await api.get<Match[]>("/matches");
+          const allMarketsResponse = await api.get<MatchMarket[]>("/matches/all-markets");
+          setMatches(matchResponse.data);
+          const grouped: MarketMap = {};
+          for (const market of allMarketsResponse.data) {
+            if (!grouped[market.match_id]) {
+              grouped[market.match_id] = [];
+            }
+            grouped[market.match_id].push(market);
+          }
+          setMarketsByMatch(grouped);
+        } catch {
+          setError("Could not load matches.");
+        } finally {
         setLoading(false);
       }
     }

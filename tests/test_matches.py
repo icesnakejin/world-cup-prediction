@@ -110,3 +110,15 @@ def test_list_open_markets_for_match() -> None:
     assert all(market["status"] == "OPEN" for market in markets)
     assert set(markets[0]) == {"id", "market_type", "selection", "line", "odds", "status"}
     assert markets[0]["line"] is None
+
+
+def test_list_all_open_markets() -> None:
+    match_id = seed_match_with_markets()
+    client = TestClient(app)
+
+    response = client.get("/matches/all-markets")
+
+    assert response.status_code == 200
+    markets = response.json()
+    assert len(markets) == 3
+    assert all(market["match_id"] == match_id for market in markets)

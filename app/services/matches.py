@@ -23,3 +23,13 @@ def list_open_markets_for_match(db: Session, match_id: int) -> list[Market]:
             .order_by(Market.id)
         )
     )
+
+
+def list_open_markets_for_matches(db: Session) -> list[Market]:
+    return list(
+        db.scalars(
+            select(Market)
+            .where(Market.status == OPEN_MARKET_STATUS)
+            .order_by(Market.match_id, Market.id)
+        )
+    )

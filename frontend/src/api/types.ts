@@ -29,6 +29,10 @@ export type Market = {
   status: string;
 };
 
+export type MatchMarket = Market & {
+  match_id: number;
+};
+
 export type Wallet = {
   balance: number;
 };
