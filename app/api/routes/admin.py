@@ -17,6 +17,7 @@ from app.services.settlement import BetNotFoundError, MatchNotCompletedError, Ma
 from app.services.tournaments import TournamentBetNotFoundError, TournamentNotCompletedError, TournamentNotFoundError, TournamentSettlementService
 from scripts.seed_group_stage_matches import main as seed_group_stage_matches
 from scripts.seed_initial_data import main as seed_initial_data
+from scripts.seed_tournaments import main as seed_tournaments
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -87,6 +88,18 @@ def seed_admin_world_cup_matches(
         "status": "ok",
         "detail": "Existing match bets, markets, matches, and wallet ledger cleared. Wallets reset and all 104 World Cup 2026 matches and default markets seeded.",
         **result,
+    }
+
+
+@router.post("/seed/tournament-markets")
+def seed_admin_tournament_markets(
+    current_user: User = Depends(get_admin_user),
+) -> dict[str, str]:
+    _ = current_user
+    seed_tournaments()
+    return {
+        "status": "ok",
+        "detail": "Tournament and full 48-team tournament winner markets seeded.",
     }
 
 

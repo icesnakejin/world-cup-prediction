@@ -8,6 +8,7 @@ from app.models.tournament import Tournament
 from app.models.tournament_bet import TournamentBet
 from app.models.tournament_market import TournamentMarket
 from app.models.wallet_transaction import WalletTransaction
+from scripts.seed_tournaments import _tournament_winner_markets
 from app.services.tournaments import (
     TOURNAMENT_BET_PLACED_TRANSACTION_TYPE,
     TOURNAMENT_BET_VOID_REFUND_TRANSACTION_TYPE,
@@ -73,6 +74,13 @@ def test_tournament_and_market_apis() -> None:
     markets_response = client.get(f"/tournaments/{tournament_id}/markets")
     assert markets_response.status_code == 200
     assert {market["id"] for market in markets_response.json()} == set(market_ids.values())
+
+
+def test_tournament_seed_covers_full_world_cup_field() -> None:
+    markets = _tournament_winner_markets()
+    assert len(markets) == 48
+    assert "USA" in markets
+    assert "United States" not in markets
 
 
 def test_tournament_bet_placement_deducts_wallet() -> None:

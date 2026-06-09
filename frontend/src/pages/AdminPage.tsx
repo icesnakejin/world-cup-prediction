@@ -30,6 +30,7 @@ export function AdminPage() {
   const [busyBetKey, setBusyBetKey] = useState<string | null>(null);
   const [seeding, setSeeding] = useState(false);
   const [seedingGroupStage, setSeedingGroupStage] = useState(false);
+  const [seedingTournamentMarkets, setSeedingTournamentMarkets] = useState(false);
   const { showToast } = useToast();
 
   async function loadAdminData() {
@@ -252,6 +253,19 @@ export function AdminPage() {
     }
   }
 
+  async function seedTournamentMarkets() {
+    setSeedingTournamentMarkets(true);
+    try {
+      await api.post("/admin/seed/tournament-markets");
+      showToast("Tournament winner markets seeded");
+      await loadAdminData();
+    } catch {
+      showToast("Could not seed tournament markets");
+    } finally {
+      setSeedingTournamentMarkets(false);
+    }
+  }
+
   return (
     <section className="space-y-4">
       <div className="flex flex-col gap-3 rounded-md border border-line bg-white px-4 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
@@ -277,6 +291,15 @@ export function AdminPage() {
           >
             <Database size={17} />
             Reset To World Cup 2026
+          </button>
+          <button
+            className="flex h-10 items-center justify-center gap-2 rounded-md border border-line px-4 text-sm font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+            disabled={seedingTournamentMarkets}
+            onClick={seedTournamentMarkets}
+            type="button"
+          >
+            <Database size={17} />
+            Seed Tournament Markets
           </button>
         </div>
       </div>

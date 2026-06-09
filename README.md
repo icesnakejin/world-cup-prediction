@@ -175,6 +175,7 @@ To seed production sample data without Shell access:
 2. Open the frontend Admin page.
 3. Click `Import Sample Data`.
 4. Click `Reset To World Cup 2026` to replace existing match data with all 104 FIFA World Cup 2026 matches.
+5. Click `Seed Tournament Markets` to expand the tournament winner market list to the full 48-team field.
 
 The admin import is idempotent. It creates configured seed users, initial wallet transactions, sample matches, match winner markets, over/under 2.5 markets, exact score markets, tournament, and tournament winner markets.
 
@@ -188,6 +189,8 @@ It also creates these default markets for every match:
 - match winner: `HOME`, `DRAW`, `AWAY`
 - over/under goals: `OVER`, `UNDER` at line `2.5`
 - exact score selections from `0-0` through the configured sample exact-score list
+
+The `Seed Tournament Markets` action only expands the tournament winner markets to the full 48-team field and does not touch match data or wallet history.
 
 ### Vercel Frontend
 
