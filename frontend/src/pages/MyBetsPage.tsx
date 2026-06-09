@@ -31,7 +31,8 @@ export function MyBetsPage() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h2 className="text-base font-bold text-ink">
-                  {bet.match.home_team} vs {bet.match.away_team}
+                  {bet.match.home_team ?? bet.match.home_placeholder ?? "TBD"} vs{" "}
+                  {bet.match.away_team ?? bet.match.away_placeholder ?? "TBD"}
                 </h2>
                 <p className="mt-1 text-sm text-slate-500">{new Date(bet.match.kickoff_time).toLocaleString()}</p>
                 <p className="mt-2 text-sm font-bold text-ocean">{bet.selection}</p>

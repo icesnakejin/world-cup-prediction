@@ -1,6 +1,7 @@
 import { Clock } from "lucide-react";
 
 import { Match, Market } from "../api/types";
+import { getMatchTitle } from "../utils/matchDisplay";
 import { BetSelection } from "./BetSlip";
 
 type MatchCardProps = {
@@ -11,8 +12,10 @@ type MatchCardProps = {
 };
 
 const labels: Record<string, string> = {
+  HOME: "Home",
   HOME_WIN: "Home",
   DRAW: "Draw",
+  AWAY: "Away",
   AWAY_WIN: "Away",
   OVER: "Over",
   UNDER: "Under"
@@ -29,12 +32,16 @@ export function MatchCard({ match, markets, selectedMarketId, onSelect }: MatchC
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h2 className="text-base font-bold text-ink">
-              {match.home_team} vs {match.away_team}
+              {getMatchTitle(match)}
             </h2>
-            <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-slate-500">
-              <Clock size={14} />
-              {new Date(match.kickoff_time).toLocaleString()}
-            </p>
+            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold text-slate-500">
+              {match.match_number && <span>Match {match.match_number}</span>}
+              <span className="flex items-center gap-1">
+                <Clock size={14} />
+                {new Date(match.kickoff_time).toLocaleString()}
+              </span>
+              {match.venue && <span>{match.venue}</span>}
+            </div>
           </div>
           <span className="w-fit rounded-md bg-slate-100 px-2 py-1 text-xs font-bold uppercase text-slate-600">
             {match.status}

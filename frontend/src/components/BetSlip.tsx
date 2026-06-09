@@ -2,6 +2,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { Send, X } from "lucide-react";
 
 import { Match, Market } from "../api/types";
+import { getMatchTitle } from "../utils/matchDisplay";
 
 export type BetSelection = {
   match: Match;
@@ -57,7 +58,7 @@ export function BetSlip({ selection, onClear, onPlaceBet }: BetSlipProps) {
         <form className="space-y-4 p-4" onSubmit={handleSubmit}>
           <div>
             <p className="text-sm font-bold text-ink">
-              {selection.match.home_team} vs {selection.match.away_team}
+              {getMatchTitle(selection.match)}
             </p>
             <p className="mt-1 text-xs font-semibold uppercase text-slate-500">{selection.market.selection}</p>
           </div>

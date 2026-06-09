@@ -8,7 +8,7 @@ OPEN_MARKET_STATUS = "OPEN"
 
 
 def list_matches(db: Session) -> list[Match]:
-    return list(db.scalars(select(Match).order_by(Match.kickoff_time, Match.id)))
+    return list(db.scalars(select(Match).order_by(Match.match_number.nullslast(), Match.kickoff_time, Match.id)))
 
 
 def get_match_by_id(db: Session, match_id: int) -> Match | None:

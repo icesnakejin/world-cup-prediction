@@ -68,9 +68,15 @@ def test_list_and_read_matches() -> None:
     assert matches[0]["home_team"] == "United States"
     assert set(matches[0]) == {
         "id",
+        "match_number",
+        "stage",
+        "group",
         "home_team",
         "away_team",
+        "home_placeholder",
+        "away_placeholder",
         "kickoff_time",
+        "venue",
         "status",
         "home_score",
         "away_score",

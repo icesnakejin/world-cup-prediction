@@ -55,14 +55,14 @@ def find_smoke_match(client: httpx.Client) -> tuple[dict[str, Any], dict[str, di
         markets = markets_response.json()
         by_key = {(market["market_type"], market["selection"]): market for market in markets}
         required = {
-            "home_win": by_key.get(("match_winner", "HOME_WIN")),
+            "home_win": by_key.get(("match_winner", "HOME")) or by_key.get(("match_winner", "HOME_WIN")),
             "over": by_key.get(("over_under", "OVER")),
             "exact": by_key.get(("exact_score", "2-1")),
         }
         if all(required.values()):
             return match, required
 
-    raise RuntimeError("No scheduled match with HOME_WIN, OVER 2.5, and exact score 2-1 markets was found.")
+    raise RuntimeError("No scheduled match with HOME, OVER 2.5, and exact score 2-1 markets was found.")
 
 
 def place_bet(client: httpx.Client, token: str, market_id: int, stake: int) -> dict[str, Any]:

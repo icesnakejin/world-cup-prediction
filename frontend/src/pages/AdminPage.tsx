@@ -5,6 +5,7 @@ import { api } from "../api/client";
 import { AdminMatchBet, AdminTournamentBet, Match, Tournament, TournamentMarket } from "../api/types";
 import { EmptyState } from "../components/EmptyState";
 import { useToast } from "../context/ToastContext";
+import { getAwayName, getHomeName, getMatchTitle } from "../utils/matchDisplay";
 
 type ScoreDraft = {
   home_score: string;
@@ -28,6 +29,7 @@ export function AdminPage() {
   const [busyTournamentId, setBusyTournamentId] = useState<number | null>(null);
   const [busyBetKey, setBusyBetKey] = useState<string | null>(null);
   const [seeding, setSeeding] = useState(false);
+  const [seedingGroupStage, setSeedingGroupStage] = useState(false);
   const { showToast } = useToast();
 
   async function loadAdminData() {
@@ -237,6 +239,19 @@ export function AdminPage() {
     }
   }
 
+  async function seedGroupStage() {
+    setSeedingGroupStage(true);
+    try {
+      await api.post("/admin/seed/group-stage");
+      showToast("World Cup 2026 matches and wallets reset");
+      await loadAdminData();
+    } catch {
+      showToast("Could not reset World Cup 2026 data");
+    } finally {
+      setSeedingGroupStage(false);
+    }
+  }
+
   return (
     <section className="space-y-4">
       <div className="flex flex-col gap-3 rounded-md border border-line bg-white px-4 py-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
@@ -244,15 +259,26 @@ export function AdminPage() {
           <h1 className="text-lg font-bold text-ink">Admin Portal</h1>
           <p className="text-sm text-slate-500">Deployment and local testing controls.</p>
         </div>
-        <button
-          className="flex h-10 items-center justify-center gap-2 rounded-md bg-ocean px-4 text-sm font-bold text-white hover:bg-blue-800 disabled:opacity-60"
-          disabled={seeding}
-          onClick={seedInitialData}
-          type="button"
-        >
-          <Database size={17} />
-          Import Sample Data
-        </button>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <button
+            className="flex h-10 items-center justify-center gap-2 rounded-md border border-line px-4 text-sm font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+            disabled={seeding}
+            onClick={seedInitialData}
+            type="button"
+          >
+            <Database size={17} />
+            Import Sample Data
+          </button>
+          <button
+            className="flex h-10 items-center justify-center gap-2 rounded-md bg-ocean px-4 text-sm font-bold text-white hover:bg-blue-800 disabled:opacity-60"
+            disabled={seedingGroupStage}
+            onClick={seedGroupStage}
+            type="button"
+          >
+            <Database size={17} />
+            Reset To World Cup 2026
+          </button>
+        </div>
       </div>
 
       {loading && <EmptyState title="Loading admin controls" />}
@@ -270,7 +296,7 @@ export function AdminPage() {
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                     <div>
                       <h2 className="text-base font-bold text-ink">
-                        {match.home_team} vs {match.away_team}
+                        {getMatchTitle(match)}
                       </h2>
                       <p className="mt-1 text-sm text-slate-500">{new Date(match.kickoff_time).toLocaleString()}</p>
                     </div>
@@ -281,7 +307,7 @@ export function AdminPage() {
 
                   <form className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1fr_auto_auto_auto]" onSubmit={(event) => setResult(event, match.id)}>
                     <label className="block text-sm font-semibold text-slate-700">
-                      {match.home_team}
+                      {getHomeName(match)}
                       <input
                         className="mt-1 h-11 w-full rounded-md border border-line px-3 outline-none focus:border-ocean"
                         min="0"
@@ -291,7 +317,7 @@ export function AdminPage() {
                       />
                     </label>
                     <label className="block text-sm font-semibold text-slate-700">
-                      {match.away_team}
+                      {getAwayName(match)}
                       <input
                         className="mt-1 h-11 w-full rounded-md border border-line px-3 outline-none focus:border-ocean"
                         min="0"
@@ -433,7 +459,8 @@ export function AdminPage() {
                             <span className="block text-xs font-medium text-slate-500">#{bet.user_id}</span>
                           </td>
                           <td className="px-4 py-3 text-slate-700">
-                            {bet.home_team} vs {bet.away_team}
+                            {bet.home_team ?? bet.home_placeholder ?? "TBD"} vs{" "}
+                            {bet.away_team ?? bet.away_placeholder ?? "TBD"}
                             <span className="block text-xs text-slate-500">{new Date(bet.kickoff_time).toLocaleString()}</span>
                           </td>
                           <td className="px-4 py-3 text-slate-700">{bet.market_type}</td>

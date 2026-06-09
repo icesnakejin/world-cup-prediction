@@ -26,6 +26,8 @@ def serialize_bet(bet: Bet) -> BetRead:
         match=BetMatchRead(
             home_team=bet.match.home_team,
             away_team=bet.match.away_team,
+            home_placeholder=bet.match.home_placeholder,
+            away_placeholder=bet.match.away_placeholder,
             kickoff_time=bet.match.kickoff_time,
         ),
         selection=bet.selection,

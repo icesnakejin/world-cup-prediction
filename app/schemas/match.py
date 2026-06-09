@@ -6,9 +6,15 @@ from pydantic import BaseModel, ConfigDict
 
 class MatchRead(BaseModel):
     id: int
-    home_team: str
-    away_team: str
+    match_number: int | None
+    stage: str | None
+    group: str | None
+    home_team: str | None
+    away_team: str | None
+    home_placeholder: str | None
+    away_placeholder: str | None
     kickoff_time: datetime
+    venue: str | None
     status: str
     home_score: int | None
     away_score: int | None

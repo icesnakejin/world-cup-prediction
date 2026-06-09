@@ -15,6 +15,7 @@ from app.schemas.match import MatchRead
 from app.schemas.tournament import TournamentRead, TournamentWinnerUpdate
 from app.services.settlement import BetNotFoundError, MatchNotCompletedError, MatchNotFoundError, SettlementService
 from app.services.tournaments import TournamentBetNotFoundError, TournamentNotCompletedError, TournamentNotFoundError, TournamentSettlementService
+from scripts.seed_group_stage_matches import main as seed_group_stage_matches
 from scripts.seed_initial_data import main as seed_initial_data
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -34,6 +35,8 @@ def serialize_admin_match_bet(bet: Bet) -> AdminMatchBetRead:
         match_id=bet.match_id,
         home_team=bet.match.home_team,
         away_team=bet.match.away_team,
+        home_placeholder=bet.match.home_placeholder,
+        away_placeholder=bet.match.away_placeholder,
         kickoff_time=bet.match.kickoff_time,
         market_id=bet.market_id,
         market_type=bet.market.market_type,
@@ -72,6 +75,19 @@ def seed_admin_initial_data(
     _ = current_user
     seed_initial_data()
     return {"status": "ok", "detail": "Initial users, wallet transactions, matches, markets, and tournaments seeded."}
+
+
+@router.post("/seed/group-stage")
+def seed_admin_world_cup_matches(
+    current_user: User = Depends(get_admin_user),
+) -> dict[str, str | int]:
+    _ = current_user
+    result = seed_group_stage_matches(replace_existing=True)
+    return {
+        "status": "ok",
+        "detail": "Existing match bets, markets, matches, and wallet ledger cleared. Wallets reset and all 104 World Cup 2026 matches and default markets seeded.",
+        **result,
+    }
 
 
 @router.get("/bets/matches", response_model=list[AdminMatchBetRead])

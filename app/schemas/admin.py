@@ -14,8 +14,10 @@ class AdminMatchBetRead(BaseModel):
     user_id: int
     username: str
     match_id: int
-    home_team: str
-    away_team: str
+    home_team: str | None
+    away_team: str | None
+    home_placeholder: str | None
+    away_placeholder: str | None
     kickoff_time: datetime
     market_id: int
     market_type: str

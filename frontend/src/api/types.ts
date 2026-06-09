@@ -6,9 +6,15 @@ export type User = {
 
 export type Match = {
   id: number;
-  home_team: string;
-  away_team: string;
+  match_number: number | null;
+  stage: string | null;
+  group: string | null;
+  home_team: string | null;
+  away_team: string | null;
+  home_placeholder: string | null;
+  away_placeholder: string | null;
   kickoff_time: string;
+  venue: string | null;
   status: string;
   home_score: number | null;
   away_score: number | null;
@@ -17,7 +23,7 @@ export type Match = {
 export type Market = {
   id: number;
   market_type: string;
-  selection: "HOME_WIN" | "DRAW" | "AWAY_WIN" | string;
+  selection: "HOME" | "HOME_WIN" | "DRAW" | "AWAY" | "AWAY_WIN" | string;
   line: string | null;
   odds: string;
   status: string;
@@ -32,8 +38,10 @@ export type Bet = {
   market_id: number;
   match_id: number;
   match: {
-    home_team: string;
-    away_team: string;
+    home_team: string | null;
+    away_team: string | null;
+    home_placeholder: string | null;
+    away_placeholder: string | null;
     kickoff_time: string;
   };
   selection: string;
@@ -86,8 +94,10 @@ export type AdminMatchBet = {
   user_id: number;
   username: string;
   match_id: number;
-  home_team: string;
-  away_team: string;
+  home_team: string | null;
+  away_team: string | null;
+  home_placeholder: string | null;
+  away_placeholder: string | null;
   kickoff_time: string;
   market_id: number;
   market_type: string;

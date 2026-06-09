@@ -270,16 +270,16 @@ class SettlementService:
             )
         )
 
-    def _winning_selection(self, home_score: int, away_score: int) -> str:
+    def _winning_selections(self, home_score: int, away_score: int) -> set[str]:
         if home_score > away_score:
-            return "HOME_WIN"
+            return {"HOME", "HOME_WIN"}
         if home_score < away_score:
-            return "AWAY_WIN"
-        return "DRAW"
+            return {"AWAY", "AWAY_WIN"}
+        return {"DRAW"}
 
     def _bet_won(self, bet: Bet, match: Match) -> bool:
         if bet.market.market_type == MATCH_WINNER_MARKET_TYPE:
-            return bet.selection == self._winning_selection(match.home_score, match.away_score)
+            return bet.selection in self._winning_selections(match.home_score, match.away_score)
 
         if bet.market.market_type == OVER_UNDER_MARKET_TYPE:
             if bet.market.line is None:

@@ -6,8 +6,11 @@ import { BetSelection, BetSlip } from "../components/BetSlip";
 import { EmptyState } from "../components/EmptyState";
 import { MatchCard } from "../components/MatchCard";
 import { useToast } from "../context/ToastContext";
+import { formatStage } from "../utils/matchDisplay";
 
 type MarketMap = Record<number, Market[]>;
+
+const STAGE_ORDER = ["group", "round_of_32", "round_of_16", "quarter_final", "semi_final", "third_place", "final"];
 
 export function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
@@ -51,6 +54,8 @@ export function MatchesPage() {
     showToast("Bet placed successfully");
   }
 
+  const sections = buildMatchSections(matches);
+
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
       <section className="min-w-0 space-y-3">
@@ -63,14 +68,19 @@ export function MatchesPage() {
         {!loading && !error && matches.length === 0 && <EmptyState title="No matches available" />}
         {!loading &&
           !error &&
-          matches.map((match) => (
-            <MatchCard
-              key={match.id}
-              match={match}
-              markets={marketsByMatch[match.id] ?? []}
-              onSelect={setSelected}
-              selectedMarketId={selected?.market.id ?? null}
-            />
+          sections.map((section) => (
+            <section key={section.title} className="space-y-3">
+              <h2 className="px-1 text-sm font-bold uppercase tracking-wide text-slate-500">{section.title}</h2>
+              {section.matches.map((match) => (
+                <MatchCard
+                  key={match.id}
+                  match={match}
+                  markets={marketsByMatch[match.id] ?? []}
+                  onSelect={setSelected}
+                  selectedMarketId={selected?.market.id ?? null}
+                />
+              ))}
+            </section>
           ))}
       </section>
       <aside className="hidden xl:block">
@@ -81,4 +91,31 @@ export function MatchesPage() {
       </div>
     </div>
   );
+}
+
+function buildMatchSections(matches: Match[]) {
+  const sorted = [...matches].sort((left, right) => {
+    const leftStage = STAGE_ORDER.indexOf(left.stage ?? "");
+    const rightStage = STAGE_ORDER.indexOf(right.stage ?? "");
+    const leftStageOrder = leftStage === -1 ? STAGE_ORDER.length : leftStage;
+    const rightStageOrder = rightStage === -1 ? STAGE_ORDER.length : rightStage;
+    if (leftStageOrder !== rightStageOrder) {
+      return leftStageOrder - rightStageOrder;
+    }
+    return (left.match_number ?? 9999) - (right.match_number ?? 9999);
+  });
+
+  const sections: { title: string; matches: Match[] }[] = [];
+  const byTitle = new Map<string, Match[]>();
+
+  for (const match of sorted) {
+    const title = match.stage === "group" && match.group ? `Group ${match.group}` : formatStage(match.stage);
+    if (!byTitle.has(title)) {
+      byTitle.set(title, []);
+      sections.push({ title, matches: byTitle.get(title)! });
+    }
+    byTitle.get(title)!.push(match);
+  }
+
+  return sections;
 }

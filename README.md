@@ -174,8 +174,20 @@ To seed production sample data without Shell access:
 1. Register or log in as an admin email configured in `ADMIN_EMAILS`.
 2. Open the frontend Admin page.
 3. Click `Import Sample Data`.
+4. Click `Reset To World Cup 2026` to replace existing match data with all 104 FIFA World Cup 2026 matches.
 
 The admin import is idempotent. It creates configured seed users, initial wallet transactions, sample matches, match winner markets, over/under 2.5 markets, exact score markets, tournament, and tournament winner markets.
+
+The World Cup reset clears existing match bets, tournament bets, markets, matches, and wallet ledger rows. It then gives every existing user a fresh `INITIAL_BONUS` wallet transaction and creates all 104 World Cup 2026 matches:
+
+- 72 group-stage matches with real teams
+- 32 knockout placeholder matches from Round of 32 through Final
+
+It also creates these default markets for every match:
+
+- match winner: `HOME`, `DRAW`, `AWAY`
+- over/under goals: `OVER`, `UNDER` at line `2.5`
+- exact score selections from `0-0` through the configured sample exact-score list
 
 ### Vercel Frontend
 
@@ -271,14 +283,15 @@ ORDER BY wt.id;
 - Render backend has `DATABASE_URL` from PostgreSQL.
 - Render backend has `ENVIRONMENT=production`.
 - Render backend has a strong `SECRET_KEY`.
-- Render backend has `ADMIN_EMAILS=ian@test.com`.
+- Render backend has `ADMIN_EMAILS=icesnakejin@gmail.com`.
 - Render backend `BACKEND_CORS_ORIGINS` exactly matches the deployed Vercel URL.
 - Render health check `/health` returns `{"status":"ok"}`.
 - Production migrations run automatically during Render startup.
 - Production seed/import completed from Admin page with `Import Sample Data`.
+- Production World Cup reset completed from Admin page with `Reset To World Cup 2026`.
 - Vercel project root is `frontend`.
 - Vercel has `VITE_API_BASE_URL` pointing to the Render backend URL.
-- Vercel has `VITE_ADMIN_EMAILS=ian@test.com`.
+- Vercel has `VITE_ADMIN_EMAILS=icesnakejin@gmail.com`.
 - Browser can load the Vercel app.
 - Login works with seeded admin user.
 - `/matches` shows seeded matches and markets.
