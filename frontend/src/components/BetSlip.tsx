@@ -2,7 +2,8 @@ import { FormEvent, useMemo, useState } from "react";
 import { Send, X } from "lucide-react";
 
 import { Match, Market } from "../api/types";
-import { getMatchTitle } from "../utils/matchDisplay";
+import { useI18n } from "../context/I18nContext";
+import { getMatchTitle, getSelectionLabel } from "../i18n";
 
 export type BetSelection = {
   match: Match;
@@ -18,6 +19,7 @@ type BetSlipProps = {
 export function BetSlip({ selection, onClear, onPlaceBet }: BetSlipProps) {
   const [stake, setStake] = useState("100");
   const [submitting, setSubmitting] = useState(false);
+  const { locale, t } = useI18n();
   const odds = selection ? Number(selection.market.odds) : 0;
   const stakeNumber = Number(stake || 0);
   const payout = useMemo(() => (stakeNumber > 0 ? stakeNumber * odds : 0), [stakeNumber, odds]);
@@ -39,7 +41,7 @@ export function BetSlip({ selection, onClear, onPlaceBet }: BetSlipProps) {
   return (
     <section className="rounded-md border border-line bg-white shadow-sm lg:sticky lg:top-24">
       <div className="flex items-center justify-between border-b border-line px-4 py-3">
-        <h2 className="text-sm font-bold uppercase tracking-wide text-slate-600">Bet Slip</h2>
+        <h2 className="text-sm font-bold uppercase tracking-wide text-slate-600">{t("betSlip")}</h2>
         {selection && (
           <button className="rounded-md p-1 text-slate-500 hover:bg-slate-100" onClick={onClear} type="button">
             <X size={18} />
@@ -47,33 +49,33 @@ export function BetSlip({ selection, onClear, onPlaceBet }: BetSlipProps) {
         )}
       </div>
       {!selection ? (
-        <div className="p-6 text-center">
-          <div className="mx-auto mb-3 grid h-16 w-16 place-items-center rounded-full bg-slate-100 text-slate-400">
-            <Send size={24} />
+          <div className="p-6 text-center">
+            <div className="mx-auto mb-3 grid h-16 w-16 place-items-center rounded-full bg-slate-100 text-slate-400">
+              <Send size={24} />
+            </div>
+          <p className="text-sm font-bold text-slate-700">{t("betSlipEmpty")}</p>
+          <p className="mt-1 text-sm text-slate-500">{t("selectMarket")}</p>
           </div>
-          <p className="text-sm font-bold text-slate-700">Bet slip empty</p>
-          <p className="mt-1 text-sm text-slate-500">Select a market to place a prediction</p>
-        </div>
-      ) : (
-        <form className="space-y-4 p-4" onSubmit={handleSubmit}>
-          <div>
-            <p className="text-sm font-bold text-ink">
-              {getMatchTitle(selection.match)}
-            </p>
-            <p className="mt-1 text-xs font-semibold uppercase text-slate-500">{selection.market.selection}</p>
-          </div>
+        ) : (
+          <form className="space-y-4 p-4" onSubmit={handleSubmit}>
+            <div>
+              <p className="text-sm font-bold text-ink">
+              {getMatchTitle(selection.match, locale)}
+              </p>
+            <p className="mt-1 text-xs font-semibold uppercase text-slate-500">{getSelectionLabel(selection.market.selection, locale)}</p>
+            </div>
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div className="rounded-md bg-slate-50 p-3">
-              <p className="text-xs font-bold uppercase text-slate-500">Odds</p>
+              <p className="text-xs font-bold uppercase text-slate-500">{t("odds")}</p>
               <p className="mt-1 text-base font-bold text-ocean">{selection.market.odds}</p>
             </div>
             <div className="rounded-md bg-slate-50 p-3">
-              <p className="text-xs font-bold uppercase text-slate-500">Payout</p>
+              <p className="text-xs font-bold uppercase text-slate-500">{t("potentialPayout")}</p>
               <p className="mt-1 text-base font-bold text-emerald-700">{payout.toFixed(0)}</p>
             </div>
           </div>
           <label className="block text-sm font-semibold text-slate-700">
-            Stake
+            {t("stake")}
             <input
               className="mt-1 h-11 w-full rounded-md border border-line px-3 outline-none focus:border-ocean"
               min="1"
@@ -88,7 +90,7 @@ export function BetSlip({ selection, onClear, onPlaceBet }: BetSlipProps) {
             type="submit"
           >
             <Send size={17} />
-            {submitting ? "Placing bet" : "Place Bet"}
+            {submitting ? t("placingBet") : t("placeBet")}
           </button>
         </form>
       )}

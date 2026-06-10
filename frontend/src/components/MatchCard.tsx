@@ -1,7 +1,8 @@
 import { Clock } from "lucide-react";
 
 import { Match, Market } from "../api/types";
-import { getMatchTitle } from "../utils/matchDisplay";
+import { useI18n } from "../context/I18nContext";
+import { formatDateTime, getMatchStatusLabel, getMatchTitle, getSelectionLabel } from "../i18n";
 import { BetSelection } from "./BetSlip";
 
 type MatchCardProps = {
@@ -11,17 +12,8 @@ type MatchCardProps = {
   onSelect: (selection: BetSelection) => void;
 };
 
-const labels: Record<string, string> = {
-  HOME: "Home",
-  HOME_WIN: "Home",
-  DRAW: "Draw",
-  AWAY: "Away",
-  AWAY_WIN: "Away",
-  OVER: "Over",
-  UNDER: "Under"
-};
-
 export function MatchCard({ match, markets, selectedMarketId, onSelect }: MatchCardProps) {
+  const { locale } = useI18n();
   const bettingDisabled = match.stage !== "group";
   const teamWinMarkets = markets.filter((market) => market.market_type === "match_winner");
   const overUnderMarkets = markets.filter((market) => market.market_type === "over_under");
@@ -33,19 +25,19 @@ export function MatchCard({ match, markets, selectedMarketId, onSelect }: MatchC
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h2 className="text-base font-bold text-ink">
-              {getMatchTitle(match)}
+              {getMatchTitle(match, locale)}
             </h2>
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold text-slate-500">
-              {match.match_number && <span>Match {match.match_number}</span>}
+              {match.match_number && <span>{locale === "zh" ? "第" : "Match "}{match.match_number}{locale === "zh" ? " 场" : ""}</span>}
               <span className="flex items-center gap-1">
                 <Clock size={14} />
-                {new Date(match.kickoff_time).toLocaleString()}
+                {formatDateTime(match.kickoff_time, locale)}
               </span>
               {match.venue && <span>{match.venue}</span>}
             </div>
           </div>
           <span className="w-fit rounded-md bg-slate-100 px-2 py-1 text-xs font-bold uppercase text-slate-600">
-            {match.status}
+            {getMatchStatusLabel(match.status, locale)}
           </span>
         </div>
       </div>
@@ -57,7 +49,8 @@ export function MatchCard({ match, markets, selectedMarketId, onSelect }: MatchC
           onSelect={onSelect}
           selectedMarketId={selectedMarketId}
           disabled={bettingDisabled}
-          title="Team Win"
+          locale={locale}
+          title={locale === "zh" ? "胜平负" : "Team Win"}
         />
         <MarketGroup
           gridClassName="grid-cols-2"
@@ -66,7 +59,8 @@ export function MatchCard({ match, markets, selectedMarketId, onSelect }: MatchC
           onSelect={onSelect}
           selectedMarketId={selectedMarketId}
           disabled={bettingDisabled}
-          title={overUnderMarkets[0]?.line ? `Over/Under ${Number(overUnderMarkets[0].line).toFixed(1)}` : "Over/Under"}
+          locale={locale}
+          title={overUnderMarkets[0]?.line ? `${locale === "zh" ? "大小球" : "Over/Under"} ${Number(overUnderMarkets[0].line).toFixed(1)}` : locale === "zh" ? "大小球" : "Over/Under"}
         />
         <MarketGroup
           gridClassName="grid-cols-2 sm:grid-cols-4"
@@ -75,7 +69,8 @@ export function MatchCard({ match, markets, selectedMarketId, onSelect }: MatchC
           onSelect={onSelect}
           selectedMarketId={selectedMarketId}
           disabled={bettingDisabled}
-          title="Exact Score"
+          locale={locale}
+          title={locale === "zh" ? "比分竞猜" : "Exact Score"}
         />
       </div>
     </article>
@@ -89,7 +84,8 @@ function MarketGroup({
   onSelect,
   selectedMarketId,
   disabled,
-  title
+  title,
+  locale
 }: {
   gridClassName: string;
   markets: Market[];
@@ -98,6 +94,7 @@ function MarketGroup({
   selectedMarketId: number | null;
   disabled: boolean;
   title: string;
+  locale: "en" | "zh";
 }) {
   if (markets.length === 0) {
     return null;
@@ -127,7 +124,7 @@ function MarketGroup({
             disabled={disabled}
             type="button"
           >
-            <span className="block text-xs font-bold uppercase text-slate-500">{labels[market.selection] ?? market.selection}</span>
+            <span className="block text-xs font-bold uppercase text-slate-500">{getSelectionLabel(market.selection, locale)}</span>
             <span className="mt-1 block text-base font-bold">{market.odds}</span>
           </button>
         ))}

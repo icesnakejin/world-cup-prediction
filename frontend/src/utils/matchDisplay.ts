@@ -1,26 +1,29 @@
 import { Match } from "../api/types";
+import {
+  formatDateTime,
+  getMatchTeamName,
+  getMatchTitle as getLocalizedMatchTitle,
+  getStageLabel,
+  Locale
+} from "../i18n";
 
-export function getHomeName(match: Match) {
-  return match.home_team ?? match.home_placeholder ?? "TBD";
+export function getHomeName(match: Match, locale: Locale) {
+  return getMatchTeamName(match, "home", locale);
 }
 
-export function getAwayName(match: Match) {
-  return match.away_team ?? match.away_placeholder ?? "TBD";
+export function getAwayName(match: Match, locale: Locale) {
+  return getMatchTeamName(match, "away", locale);
 }
 
-export function getMatchTitle(match: Match) {
-  return `${getHomeName(match)} vs ${getAwayName(match)}`;
+export function getMatchTitle(match: Match, locale: Locale) {
+  return getLocalizedMatchTitle(match, locale);
 }
 
-export function formatStage(stage: string | null) {
-  const labels: Record<string, string> = {
-    group: "Group Stage",
-    round_of_32: "Round of 32",
-    round_of_16: "Round of 16",
-    quarter_final: "Quarter Final",
-    semi_final: "Semi Final",
-    third_place: "Third Place",
-    final: "Final"
-  };
-  return stage ? labels[stage] ?? stage.replace(/_/g, " ") : "Matches";
+export function formatStage(stage: string | null, locale: Locale) {
+  return getStageLabel(stage, locale);
 }
+
+export function formatMatchDate(value: string, locale: Locale) {
+  return formatDateTime(value, locale);
+}
+

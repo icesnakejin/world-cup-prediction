@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import { api } from "../api/client";
 import { Wallet as WalletType } from "../api/types";
 import { isAdminEmail } from "../config/admin";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useAuth } from "../context/AuthContext";
+import { useI18n } from "../context/I18nContext";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
@@ -15,6 +17,7 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
 
 export function AppLayout() {
   const { logout, user } = useAuth();
+  const { t } = useI18n();
   const [balance, setBalance] = useState<number | null>(null);
   const isAdmin = isAdminEmail(user?.email);
   const location = useLocation();
@@ -46,43 +49,44 @@ export function AppLayout() {
               <Trophy size={22} />
             </div>
             <div>
-              <p className="text-base font-bold sm:text-lg">World Cup Prediction League</p>
+              <p className="text-base font-bold sm:text-lg">{t("appName")}</p>
               <p className="text-xs text-blue-100">{user?.username}</p>
             </div>
           </div>
           <nav className="flex flex-wrap items-center gap-1">
             <NavLink className={navLinkClass} to="/matches?stage=group">
-              Matches
+              {t("matches")}
             </NavLink>
             <NavLink className={navLinkClass} to="/tournaments/1">
-              World Champion
+              {t("worldChampion")}
             </NavLink>
             <NavLink className={navLinkClass} to="/my-bets">
-              My Bets
+              {t("myBets")}
             </NavLink>
             <NavLink className={navLinkClass} to="/leaderboard">
-              Leaderboard
+              {t("leaderboard")}
             </NavLink>
             <NavLink className={navLinkClass} to="/wallet">
-              Wallet
+              {t("wallet")}
             </NavLink>
             {isAdmin && (
               <NavLink className={navLinkClass} to="/admin">
-                Admin
+                {t("admin")}
               </NavLink>
             )}
           </nav>
-          <div className="flex items-center justify-between gap-3 lg:justify-end">
+          <div className="flex flex-wrap items-center justify-between gap-3 lg:justify-end">
+            <LanguageSwitcher />
             <div className="flex h-10 items-center gap-2 rounded-md bg-blue-950/35 px-3 text-sm font-semibold">
               <Wallet size={17} />
-              {balance === null ? "-" : balance.toLocaleString()} coins
+              {balance === null ? "-" : balance.toLocaleString()} {t("coins")}
             </div>
             <button
               className="h-10 rounded-md border border-blue-200 px-3 text-sm font-semibold text-white hover:bg-white hover:text-ocean"
               onClick={logout}
               type="button"
             >
-              Logout
+              {t("logout")}
             </button>
           </div>
         </div>
@@ -96,7 +100,7 @@ export function AppLayout() {
       >
         {showTournamentSidebar && (
           <aside className="hidden rounded-md border border-line bg-white p-3 lg:block">
-            <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">Tournament</p>
+            <p className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">{t("tournaments")}</p>
             <nav className="space-y-1">
               <Link
                 className={[
@@ -105,7 +109,7 @@ export function AppLayout() {
                 ].join(" ")}
                 to="/matches?stage=group"
               >
-                Group Stage
+                {t("groupStage")}
               </Link>
               <Link
                 className={[
@@ -114,7 +118,7 @@ export function AppLayout() {
                 ].join(" ")}
                 to="/matches?stage=knockout"
               >
-                Knockout Stage
+                {t("knockoutStage")}
               </Link>
             </nav>
           </aside>
