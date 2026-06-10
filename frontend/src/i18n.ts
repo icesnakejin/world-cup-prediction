@@ -123,7 +123,7 @@ const messages = {
     teamWin: "胜平负",
     betSlip: "下注单",
     betSlipEmpty: "下注单为空",
-    selectMarket: "选择一个盘口开始下注",
+    selectMarket: "选择一个竞猜开始",
     selectTeamToPlaceTournamentWinnerBet: "选择一个球队进行冠军投注。",
     stake: "投注金额",
     odds: "赔率",
